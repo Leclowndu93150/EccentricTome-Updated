@@ -1,23 +1,20 @@
 package website.eccentric.tome;
 
-import net.minecraft.core.HolderLookup;
+import com.mojang.serialization.MapCodec;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
-import net.minecraft.world.item.crafting.CraftingInput;
-import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.*;
 import net.minecraft.world.level.Level;
 import website.eccentric.tome.core.TomeManager;
 
 public class AttachmentRecipe extends CustomRecipe {
-    public AttachmentRecipe(CraftingBookCategory category) {
-        super(category);
-    }
+    private static final AttachmentRecipe INSTANCE = new AttachmentRecipe();
+    public static final MapCodec<AttachmentRecipe> CODEC = MapCodec.unit(AttachmentRecipe.INSTANCE);
+    public static final StreamCodec<RegistryFriendlyByteBuf, AttachmentRecipe> STREAM_CODEC = StreamCodec.unit(AttachmentRecipe.INSTANCE);
 
     @Override
     public boolean matches(CraftingInput crafting, Level level) {
@@ -26,6 +23,7 @@ public class AttachmentRecipe extends CustomRecipe {
 
         for (var i = 0; i < crafting.size(); i++) {
             var stack = crafting.getItem(i);
+
             if (stack.isEmpty())
                 continue;
 
@@ -49,7 +47,7 @@ public class AttachmentRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack assemble(CraftingInput crafting, HolderLookup.Provider access) {
+    public ItemStack assemble(CraftingInput crafting) {
         var tome = ItemStack.EMPTY;
         var target = ItemStack.EMPTY;
 
@@ -67,11 +65,6 @@ public class AttachmentRecipe extends CustomRecipe {
         return TomeManager.addBookToTome(tome.copy(), target);
     }
 
-    @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width * height >= 2;
-    }
-
     public boolean isTarget(ItemStack stack) {
         if (stack.isEmpty())
             return false;
@@ -85,17 +78,14 @@ public class AttachmentRecipe extends CustomRecipe {
     }
 
     @Override
-    public ItemStack getResultItem(HolderLookup.Provider registries) {
-        return ItemStack.EMPTY;
-    }
-
-    @Override
     public NonNullList<ItemStack> getRemainingItems(CraftingInput crafting) {
         return NonNullList.withSize(crafting.size(), ItemStack.EMPTY);
     }
 
     @Override
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return EccentricTome.ATTACHMENT.get();
     }
+
+
 }

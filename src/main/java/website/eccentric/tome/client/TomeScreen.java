@@ -5,16 +5,16 @@ import java.util.stream.Collectors;
 
 import com.mojang.blaze3d.platform.InputConstants;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.item.ItemColor;
-import net.minecraft.client.color.item.ItemColors;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import website.eccentric.tome.EccentricDataComponents;
 import website.eccentric.tome.EccentricTome;
@@ -35,21 +35,21 @@ public class TomeScreen extends Screen {
     }
 
     @Override
-    public boolean mouseClicked(double x, double y, int button) {
-        if (button != LEFT_CLICK || selectedMod == null)
-            return super.mouseClicked(x, y, button);
+    public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+        if (event.button() != LEFT_CLICK || selectedMod == null)
+            return super.mouseClicked(event, doubleClick);
 
-        PacketDistributor.sendToServer(new SelectBookPacket(selectedMod, selectedIndex));
+        ClientPacketDistributor.sendToServer(new SelectBookPacket(selectedMod, selectedIndex));
 
         this.onClose();
         return true;
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
+    public boolean keyPressed(KeyEvent event) {
         var minecraft = this.minecraft;
-        var key = InputConstants.getKey(keyCode, scanCode);
-        if (super.keyPressed(keyCode, scanCode, modifiers)) {
+        var key = InputConstants.getKey(event);
+        if (super.keyPressed(event)) {
             return true;
         } else if (minecraft != null && minecraft.options.keyInventory.isActiveAndMatches(key)) {
             this.onClose();
@@ -65,12 +65,12 @@ public class TomeScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics gui, int mouseX, int mouseY, float ticks) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float ticks) {
         var minecraft = this.minecraft;
         if (minecraft == null)
             return;
 
-        super.render(gui, mouseX, mouseY, ticks);
+        super.extractRenderState(graphics, mouseX, mouseY, ticks);
 
         TomeData data = tome.getOrDefault(EccentricDataComponents.TOME_DATA.get(), TomeData.EMPTY);
         var books = data.books().values().stream()
@@ -84,18 +84,18 @@ public class TomeScreen extends Screen {
         var startX = window.getGuiScaledWidth() / 2 - booksPerRow * iconSize / 2;
         var startY = window.getGuiScaledHeight() / 2 - rows * iconSize + 45;
         var padding = 4;
-        gui.fill(startX - padding, startY - padding,
+        graphics.fill(startX - padding, startY - padding,
                 startX + iconSize * booksPerRow + padding,
                 startY + iconSize * rows + padding, 0x22000000);
 
         this.selectedMod = null;
         this.selectedIndex = -1;
-        
+
         var displayIndex = 0;
         for (var entry : data.books().entrySet()) {
             var modId = entry.getKey();
             var modBooks = entry.getValue();
-            
+
             for (var bookIndex = 0; bookIndex < modBooks.size(); bookIndex++) {
                 var book = modBooks.get(bookIndex);
                 if (book.is(Items.AIR))
@@ -107,17 +107,17 @@ public class TomeScreen extends Screen {
                 if (mouseX > stackX && mouseY > stackY && mouseX <= (stackX + 16) && mouseY <= (stackY + 16)) {
                     this.selectedMod = modId;
                     this.selectedIndex = bookIndex;
-                    gui.renderComponentTooltip(this.font, getTooltipFromItem(minecraft, book), mouseX, mouseY);
+                    graphics.setTooltipForNextFrame(this.font, book, mouseX, mouseY);
                 }
-                
-                gui.renderItem(book, stackX, stackY);
-                gui.renderItemDecorations(font, book, mouseX, mouseY);
+
+                graphics.item(book, stackX, stackY);
+                graphics.itemDecorations(font, book, mouseX, mouseY);
                 displayIndex++;
             }
         }
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
     }
 }

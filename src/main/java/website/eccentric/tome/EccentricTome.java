@@ -1,10 +1,12 @@
 package website.eccentric.tome;
 
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.CustomRecipe;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -13,6 +15,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.entity.item.ItemTossEvent;
@@ -27,7 +30,6 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
-import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 import website.eccentric.tome.core.TomeManager;
 import website.eccentric.tome.network.RevertToTomePacket;
 
@@ -42,9 +44,9 @@ public class EccentricTome {
     public static final DeferredRegister<RecipeSerializer<?>> RECIPES = DeferredRegister
             .create(BuiltInRegistries.RECIPE_SERIALIZER, ID);
 
-    public static final Supplier<RecipeSerializer<?>> ATTACHMENT = RECIPES.register("attachment",
-            () -> new SimpleCraftingRecipeSerializer<>(AttachmentRecipe::new));
-    public static final DeferredItem<Item> TOME = ITEMS.register("tome", TomeItem::new);
+    public static final Supplier<RecipeSerializer<? extends CustomRecipe>> ATTACHMENT = RECIPES.register("attachment",
+            () -> new RecipeSerializer<>(AttachmentRecipe.CODEC, AttachmentRecipe.STREAM_CODEC));
+    public static final DeferredItem<Item> TOME = ITEMS.registerItem("tome", TomeItem::new);
 
     public EccentricTome(IEventBus modEvent, ModContainer container) {
         ITEMS.register(modEvent);
@@ -75,7 +77,7 @@ public class EccentricTome {
     private void onLeftClickEmpty(PlayerInteractEvent.LeftClickEmpty event) {
         var stack = event.getItemStack();
         if (TomeManager.isActiveBook(stack)) {
-            PacketDistributor.sendToServer(RevertToTomePacket.INSTANCE);
+            ClientPacketDistributor.sendToServer(RevertToTomePacket.INSTANCE);
         }
     }
 
@@ -87,9 +89,9 @@ public class EccentricTome {
         var stack = entity.getItem();
         
         if (TomeManager.isActiveBook(stack)) {
-            var level = entity.getCommandSenderWorld();
+            var level = entity.level();
             
-            if (!level.isClientSide) {
+            if (!level.isClientSide()) {
                 ItemStack extractedBook = TomeManager.extractBook(stack, false);
                 ItemStack tome = TomeManager.extractBook(stack, true);
                 

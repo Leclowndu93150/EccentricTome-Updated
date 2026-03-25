@@ -6,7 +6,7 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import website.eccentric.tome.EccentricTome;
 
-@EventBusSubscriber(modid = EccentricTome.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = EccentricTome.ID)
 public class TomeNetworking {
     @SubscribeEvent
     public static void registerPayloads(RegisterPayloadHandlersEvent event) {

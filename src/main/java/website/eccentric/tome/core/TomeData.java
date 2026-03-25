@@ -2,15 +2,22 @@ package website.eccentric.tome.core;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponentGetter;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipProvider;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-public record TomeData(UUID tomeId, Map<String, List<ItemStack>> books) {
+public record TomeData(UUID tomeId, Map<String, List<ItemStack>> books) implements TooltipProvider {
     
     public static final TomeData EMPTY = new TomeData(UUID.randomUUID(), new HashMap<>());
     
@@ -74,5 +81,10 @@ public record TomeData(UUID tomeId, Map<String, List<ItemStack>> books) {
     
     public boolean isEmpty() {
         return books.isEmpty();
+    }
+
+    @Override
+    public void addToTooltip(Item.TooltipContext tooltipContext, Consumer<Component> consumer, TooltipFlag tooltipFlag, DataComponentGetter dataComponentGetter) {
+        consumer.accept(Component.literal("Hiii"));
     }
 }

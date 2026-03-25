@@ -2,12 +2,12 @@ package website.eccentric.tome.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.gui.LayeredDraw;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
+import net.neoforged.neoforge.client.gui.GuiLayer;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.ChatFormatting;
@@ -21,9 +21,9 @@ import website.eccentric.tome.TomeItem;
 import website.eccentric.tome.core.TomeData;
 import website.eccentric.tome.core.TomeManager;
 
-@EventBusSubscriber(modid = EccentricTome.ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = EccentricTome.ID, value = Dist.CLIENT)
 public class RenderGuiOverlayHandler {
-	public static final LayeredDraw.Layer LAYER = ((guiGraphics, deltaTracker) -> {
+	public static final GuiLayer LAYER = ((guiGraphics, deltaTracker) -> {
 
 		var minecraft = Minecraft.getInstance();
 
@@ -67,19 +67,16 @@ public class RenderGuiOverlayHandler {
 		var hoverName = book.getHoverName();
 		var convert = I18n.get("eccentrictome.convert");
 
-		RenderSystem.enableBlend();
-		RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
 		var x = guiGraphics.guiWidth() / 2 - 17;
 		var y = guiGraphics.guiHeight() / 2 + 2;
 
-		guiGraphics.renderItem(book, x, y);
-		guiGraphics.drawString(minecraft.font, hoverName, x + 20, y + 4, 0xFFFFFFFF);
-		guiGraphics.drawString(minecraft.font, ChatFormatting.GRAY + convert, x + 25, y + 14, 0xFFFFFFFF);
+		guiGraphics.item(book, x, y);
+		guiGraphics.text(minecraft.font, hoverName, x + 20, y + 4, 0xFFFFFFFF);
+		guiGraphics.text(minecraft.font, ChatFormatting.GRAY + convert, x + 25, y + 14, 0xFFFFFFFF);
 	});
 
 	@SubscribeEvent
 	public static void registerLayers(RegisterGuiLayersEvent event) {
-		event.registerAboveAll(ResourceLocation.fromNamespaceAndPath(EccentricTome.ID, "tome_overlay"), LAYER);
+		event.registerAboveAll(Identifier.fromNamespaceAndPath(EccentricTome.ID, "tome_overlay"), LAYER);
 	}
 }

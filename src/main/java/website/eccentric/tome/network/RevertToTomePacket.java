@@ -5,7 +5,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -18,7 +18,7 @@ public record RevertToTomePacket() implements CustomPacketPayload {
     public static final RevertToTomePacket INSTANCE = new RevertToTomePacket();
     
     public static final Type<RevertToTomePacket> TYPE = new Type<>(
-        ResourceLocation.fromNamespaceAndPath(EccentricTome.ID, "revert_to_tome")
+        Identifier.fromNamespaceAndPath(EccentricTome.ID, "revert_to_tome")
     );
     
     public static final StreamCodec<RegistryFriendlyByteBuf, RevertToTomePacket> STREAM_CODEC = 

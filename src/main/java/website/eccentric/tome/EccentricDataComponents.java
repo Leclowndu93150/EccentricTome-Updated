@@ -5,12 +5,13 @@ import java.util.function.UnaryOperator;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import website.eccentric.tome.core.TomeData;
 
 public class EccentricDataComponents {
-    public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(EccentricTome.ID);
+    public static final DeferredRegister.DataComponents COMPONENTS = DeferredRegister.createDataComponents(Registries.DATA_COMPONENT_TYPE, EccentricTome.ID);
 
     public static final Supplier<DataComponentType<TomeData>> TOME_DATA =
             registerDataComponentType("tome_data", () -> builder -> builder

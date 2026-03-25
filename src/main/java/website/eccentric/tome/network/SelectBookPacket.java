@@ -3,7 +3,7 @@ package website.eccentric.tome.network;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,7 @@ import website.eccentric.tome.core.TomeManager;
 public record SelectBookPacket(String modId, int index) implements CustomPacketPayload {
     
     public static final Type<SelectBookPacket> TYPE = new Type<>(
-        ResourceLocation.fromNamespaceAndPath(EccentricTome.ID, "select_book")
+        Identifier.fromNamespaceAndPath(EccentricTome.ID, "select_book")
     );
     
     public static final StreamCodec<RegistryFriendlyByteBuf, SelectBookPacket> STREAM_CODEC = StreamCodec.composite(

@@ -13,7 +13,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-@EventBusSubscriber(modid = EccentricTome.ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = EccentricTome.ID)
 public class EccentricConfig {
     public static final ModConfigSpec.BooleanValue DISABLE_OVERLAY;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> ITEMS;

@@ -1,8 +1,9 @@
 package website.eccentric.tome.core;
 
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.*;
 
@@ -28,7 +29,12 @@ public class TomeCore {
     public boolean addBook(ItemStack book) {
         if (book.isEmpty()) return false;
         
-        String modId = book.getItem().getCreatorModId(book);
+        String modId;
+        try {
+            modId = book.getItem().getCreatorModId(null, book);
+        } catch (Exception e) {
+            modId = BuiltInRegistries.ITEM.getKey(book.getItem()).getNamespace();
+        }
         StoredBook storedBook = new StoredBook(book);
         
         List<StoredBook> modBooks = books.computeIfAbsent(modId, k -> new ArrayList<>());
@@ -101,7 +107,7 @@ public class TomeCore {
     }
     
     public static class StoredBook {
-        private final ResourceLocation itemId;
+        private final Identifier itemId;
         private final ItemStack cachedStack;
         
         public StoredBook(ItemStack stack) {
@@ -115,7 +121,7 @@ public class TomeCore {
         
         public boolean matches(ItemStack stack) {
             if (stack.isEmpty()) return false;
-            ResourceLocation otherId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+            Identifier otherId = BuiltInRegistries.ITEM.getKey(stack.getItem());
             if (!itemId.equals(otherId)) return false;
             
             return ItemStack.isSameItemSameComponents(cachedStack, stack);
