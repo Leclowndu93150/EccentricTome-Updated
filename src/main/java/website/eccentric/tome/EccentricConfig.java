@@ -45,17 +45,17 @@ public class EccentricConfig {
                         List.of("items"),
                         () -> List.of(
                                 "actuallyadditions:booklet", "ad_astra:astrodux", "ae2:guide", "alexsmobs:animal_dictionary",
-                                "ars_nouveau:worn_notebook", "compactmachines:personal_shrinking_device",
+                                "ars_nouveau:worn_notebook", "auroral:guide", "compactmachines:personal_shrinking_device",
                                 "cookingforblockheads:no_filter_edition", "draconicevolution:info_tablet",
                                 "enigmaticlegacy:the_acknowledgment", "eternal_starlight:book", "evilcraft:origins_of_darkness",
-                                "iceandfire:bestiary", "immersiveengineering:manual",
-                                "integrateddynamics:on_the_dynamics_of_integration", "merrymaking:merrymanual",
-                                "nautec:nautec_guide", "occultism:dictionary_of_spirits", "paganbless:pagan_guide",
-                                "powah:book", "rootsclassic:runic_tablet", "securitycraft:sc_manual",
-                                "tconstruct:fantastic_foundry", "tconstruct:materials_and_you",
-                                "tconstruct:mighty_smelting", "tconstruct:puny_smelting", "tconstruct:tinkers_gadgetry",
-                                "theoneprobe:probenote", "fargostalismans:guide_book", "solonion:food_book",
-                                "rftoolsbase:manual", "modern_industrialization:guidebook"
+                                "fargostalismans:guide_book", "gaze:encyclopedia_unveiled", "iceandfire:bestiary",
+                                "immersiveengineering:manual", "integrateddynamics:on_the_dynamics_of_integration",
+                                "malum:encyclopedia_arcana", "malum:encyclopedia_esoterica", "merrymaking:merrymanual",
+                                "modern_industrialization:guidebook", "nautec:nautec_guide", "neovitae:guide_book",
+                                "occultism:dictionary_of_spirits", "paganbless:pagan_guide", "powah:book", "rftoolsbase:manual",
+                                "rootsclassic:runic_tablet", "securitycraft:sc_manual", "silentgear:guide_book", "solonion:food_book",
+                                "tconstruct:fantastic_foundry", "tconstruct:materials_and_you", "tconstruct:mighty_smelting",
+                                "tconstruct:puny_smelting", "tconstruct:tinkers_gadgetry", "theoneprobe:probenote"
                         ),
                         () -> "",
                         Validator::isStringResource
